@@ -47,17 +47,37 @@ redis-benchmark -h 127.0.0.1 -p 6379 -n 100000 -c 10
 ```bash
 client list 
 ```
-
+## use redis python and PHP (OPTIONAL)
 ```bash
+sudo yum -y install  python-redis php-redis
 ```
 
+# Use Redis as CLUSTER mode
+
+node-1 : Primary node 10.0.0.10
+node-2 : Replica node 10.0.0.11
+node-3 : Replica node 10.0.0.12
+
+## edit configuration file MASTER
+ /etc/redis.conf
 ```bash
+bind 0.0.0.0 ::1 
+protected-mode no 
 ```
 
+## edit configuration file SLAVES
 ```bash
-```
+bind 0.0.0.0 ::1
+protected-mode no 
 
+replicaof 10.0.0.10 6379
+masterauth <AuthPassword>
+```
+restart the daemon and using MASTER node, check replication
 ```bash
+redis-cli
+AUTH  <AuthPassword>
+info replication
 ```
 
 ```bash
