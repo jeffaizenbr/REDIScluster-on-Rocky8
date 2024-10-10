@@ -114,12 +114,12 @@ WantedBy=multi-user.target
 cp /var/lib/redis/dump.rdb /var/lib/redis/dump-6378.rdb
 ```
 
-reload daemon and start 
+## reload daemon and start 
 ```bash
 systemctl daemon-reload
 systemctl enable --now reids-6378.service
 ```
-check ports
+## check ports
 ```bash
 netstat -vaulpan | grep -i redis
 ```
