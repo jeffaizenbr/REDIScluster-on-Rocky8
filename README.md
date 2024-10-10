@@ -1,4 +1,4 @@
-# REDIScluster-on-Rocky8
+# 01-REDIS cluster-on-Rocky8
 
 ## update packages
 ```bash
@@ -52,7 +52,7 @@ client list
 sudo yum -y install  python-redis php-redis
 ```
 
-# Use Redis as CLUSTER mode
+# 02 - Use Redis as CLUSTER mode
 
 node-1 : Primary node 10.0.0.10
 node-2 : Replica node 10.0.0.11
@@ -79,7 +79,7 @@ redis-cli
 AUTH  <AuthPassword>
 info replication
 ```
-# Setup more them one port using REDIS
+# 03 - Setup more them one port using REDIS
 
 ## copy your main redis.conf to redis-6378.conf them add the lines below 
 ```bash
