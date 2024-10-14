@@ -123,3 +123,34 @@ systemctl enable --now reids-6378.service
 ```bash
 netstat -vaulpan | grep -i redis
 ```
+
+## Optional use SENTINEL
+
+## Install SENTINEL
+```bash
+dnf install redis-sentinel
+```
+## configure redis SENTINEL
+edit /etc/redis/sentinel.conf
+```bash
+port 5000
+sentinel monitor myprimary 127.0.0.1 6379 2
+sentinel down-after-milliseconds myprimary 5000
+sentinel failover-timeout myprimary 60000
+sentinel auth-pass myprimary a_strong_password
+```
+## Commands to check conectivity 
+```bash
+# Provides information about the Primary
+SENTINEL master myprimary
+
+# Gives you information about the replicas connected to the Primary
+SENTINEL replicas myprimary
+
+# Provides information on the other Sentinels
+SENTINEL sentinels myprimary
+
+# Provides the IP address of the current Primary
+SENTINEL get-master-addr-by-name myprimary
+```
+
