@@ -134,7 +134,7 @@ dnf install redis-sentinel
 edit /etc/redis/sentinel.conf
 ```bash
 port 5000
-sentinel monitor myprimary 127.0.0.1 6379 2
+sentinel monitor myprimary <IP> 6379 2
 sentinel down-after-milliseconds myprimary 5000
 sentinel failover-timeout myprimary 60000
 sentinel auth-pass myprimary a_strong_password
