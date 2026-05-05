@@ -1,0 +1,82 @@
+---
+- name: Deploy Redis Cluster
+  hosts: redis_cluster
+  become: yes
+  vars:
+    redis_password: "XXXXXXXXX"   # Redis password variable
+
+  tasks:
+    # Enable EPEL repository
+    - name: Enable EPEL repository
+      dnf:
+        name: epel-release
+        state: present
+
+    # Import Remi GPG key
+    - name: Import Remi GPG key
+      rpm_key:
+        state: present
+        key: https://rpms.remirepo.net/RPM-GPG-KEY-remi
+
+    # Enable Remi repository for Redis 
+    - name: Enable Remi repository for Redis
+      dnf:
+        name: https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+        state: present
+        disable_gpg_check: yes
+
+    # Install Redis from Remi repo
+    - name: Install Redis 8.6 from Remi
+      dnf:
+        name: redis
+        enablerepo: remi
+        state: present
+
+    # Install optional packages
+    - name: Install optional packages (python-redis, php-redis)
+      dnf:
+        name:
+          - python3-redis
+          - php-redis
+        state: present
+
+    # Configure Redis Master
+    - name: Configure Redis Master
+      when: "'redis_master' in group_names"
+      block:
+        - name: Update redis.conf for Master
+          lineinfile:
+            path: /etc/redis/redis.conf
+            regexp: "{{ item.regexp }}"
+            line: "{{ item.line }}"
+          loop:
+            - { regexp: '^bind', line: 'bind 0.0.0.0 ::1' }
+            - { regexp: '^protected-mode', line: 'protected-mode no' }
+            - { regexp: '^requirepass', line: "requirepass {{ redis_password }}" }
+            - { regexp: '^appendonly', line: 'appendonly yes' }
+            - { regexp: '^appendfilename', line: 'appendfilename "appendonly.aof"' }
+
+    # Configure Redis Slaves
+    - name: Configure Redis Slaves
+      when: "'redis_slaves' in group_names"
+      block:
+        - name: Update redis.conf for Slaves
+          lineinfile:
+            path: /etc/redis/redis.conf
+            regexp: "{{ item.regexp }}"
+            line: "{{ item.line }}"
+          loop:
+            - { regexp: '^bind', line: 'bind 0.0.0.0 ::1' }
+            - { regexp: '^protected-mode', line: 'protected-mode no' }
+            - { regexp: '^requirepass', line: "requirepass {{ redis_password }}" }
+            - { regexp: '^masterauth', line: "masterauth {{ redis_password }}" }
+            - { regexp: '^replicaof', line: "replicaof {{ hostvars[groups['redis_master'][0]].ansible_host }} 6379" }
+            - { regexp: '^appendonly', line: 'appendonly yes' }
+            - { regexp: '^appendfilename', line: 'appendfilename "appendonly.aof"' }
+
+    # Enable and restart Redis service
+    - name: Enable and restart Redis service
+      systemd:
+        name: redis
+        enabled: yes
+        state: restarted
