@@ -1,15 +1,15 @@
- 🚀 Redis Replication with Ansible
+# 🚀 Redis Replication with Ansible
 
-Automatize a criação de um cluster Redis com **1 master + múltiplos slaves** usando Ansible.
+Automate the deployment of a Redis cluster with **1 master + multiple slaves** using Ansible.
 
-Este projeto configura:
-- 🔐 Autenticação compartilhada entre todos os nós  
-- 🔁 Replicação automática (master → slaves)  
-- ⚡ Deploy rápido e reprodutível  
+This project provides:
+- 🔐 Shared authentication across all nodes  
+- 🔁 Automatic replication (master → slaves)  
+- ⚡ Fast and reproducible deployment  
 
 ---
 
-## 📦 Estrutura do Projeto
+## 📦 Project Structure
 
 ```
 .
@@ -22,7 +22,7 @@ Este projeto configura:
 
 ## 🖥️ Inventory
 
-Exemplo de arquivo `hosts`:
+Example `hosts` file:
 
 ```ini
 [redis_master]
@@ -37,7 +37,7 @@ redis_master
 redis_slaves
 ```
 
-➕ Para adicionar mais slaves, basta incluir novos hosts em:
+➕ To add more slaves, simply append new hosts under:
 
 ```ini
 [redis_slaves]
@@ -47,39 +47,39 @@ redis_slaves
 
 ## ⚙️ Playbook
 
-O arquivo `play.yml` é responsável por:
+The `play.yml` file is responsible for:
 
-- 📥 Instalar o Redis 8.6  
-- 🧠 Configurar o nó master  
-- 🔗 Configurar os slaves para replicação automática  
-- 🔑 Aplicar autenticação em todos os nós  
+- 📥 Installing Redis 8.6  
+- 🧠 Configuring the master node  
+- 🔗 Setting up slaves for automatic replication  
+- 🔑 Applying authentication across all nodes  
 
-A diretiva `replicaof` usa automaticamente o IP do master definido no inventory.
+The `replicaof` directive automatically uses the master IP from the inventory.
 
 ---
 
-## 🔐 Configuração de Senha
+## 🔐 Password Configuration
 
-Edite a variável no playbook:
+Update the variable in the playbook:
 
 ```yaml
 vars:
   redis_password: "XXXXXXXXX"
 ```
 
-👉 Substitua "XXXXXXXXX" pela senha desejada.
+👉 Replace `"XXXXXXXXX"` with your desired password.
 
-Essa senha será usada para:
-- Autenticação de clientes  
-- Comunicação entre master e slaves  
+This password will be used for:
+- Client authentication  
+- Master-slave communication  
 
 ---
 
-## ▶️ Como Usar
+## ▶️ Usage
 
-1. ✏️ Edite o arquivo `hosts` com seus IPs  
-2. 🔑 Configure a senha no `play.yml`  
-3. 🚀 Execute o playbook:
+1. ✏️ Edit the `hosts` file with your IPs  
+2. 🔑 Set the password in `play.yml`  
+3. 🚀 Run the playbook:
 
 ```bash
 ansible-playbook -i hosts play.yml
@@ -87,27 +87,27 @@ ansible-playbook -i hosts play.yml
 
 ---
 
-## 🔍 Verificando Replicação
+## 🔍 Checking Replication
 
-### 🧠 No Master
+### 🧠 On the Master
 
 ```bash
 redis-cli -a <your_password> info replication
 ```
 
-Você deve ver:
-- Lista de slaves conectados  
-- Status de sincronização  
+You should see:
+- Connected slaves  
+- Synchronization status  
 
 ---
 
-### 🔁 Nos Slaves
+### 🔁 On the Slaves
 
 ```bash
 redis-cli -a <your_password> info replication
 ```
 
-Você deve ver:
+You should see:
 
 ```
 master_link_status:up
@@ -117,20 +117,20 @@ master_link_status:up
 
 ## ❤️ Health Check
 
-Execute o comando em qualquer nó:
+Run on any node:
 
 ```bash
 redis-cli -a <your_password> info replication
 ```
 
-✔️ Tudo funcionando corretamente quando:
-- Master mostra slaves conectados  
-- Slaves mostram conexão ativa com o master  
+✔️ Everything is working correctly when:
+- Master shows connected slaves  
+- Slaves show active connection to master  
 
 ---
 
-## 🧩 Dicas
+## 🧩 Tips
 
-- Use nomes consistentes para os hosts (`redis01`, `redis02`, etc.)  
-- Garanta conectividade entre os nós (porta 6379 liberada)  
-- Considere usar **Ansible Vault** para proteger a senha 🔐  
+- Use consistent hostnames (`redis01`, `redis02`, etc.)  
+- Ensure network connectivity between nodes (port 6379 open)  
+- Consider using **Ansible Vault** to protect the password 🔐  
