@@ -1,0 +1,10 @@
+[redis_master]
+redis01 ansible_host=3.231.157.241
+
+[redis_slaves]
+redis02 ansible_host=44.204.133.105
+redis03 ansible_host=44.203.29.135
+
+[redis_cluster:children]
+redis_master
+redis_slaves
